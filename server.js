@@ -1,10 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const pool = require('./config/db');
 const cors = require('cors');
 
 dotenv.config();
-connectDB();
+pool.getConnection()
+  .then(() => console.log("✅ MySQL connected"))
+  .catch((err) => console.error("❌ MySQL connection failed:", err.message));
 
 // Run admin update script
 require('./scripts/resetAdmin')(); // ✅ This will auto-run the script

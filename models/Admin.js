@@ -1,25 +1,15 @@
-const dotenv = require("dotenv");
-const { resetAdmin } = require("../models/adminModel");
+const pool = require('../config/db');
+const bcrypt = require('bcryptjs');
 
-dotenv.config();
+exports.resetAdmin = async (email, plainPassword) => {
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-const run = async () => {
-  try {
-    const email = "paykaro@example.com";
-    const password = "newsecurepassword";
+  // delete all admins
+  await pool.query('DELETE FROM admins');
 
-    await resetAdmin(email, password);
-
-    console.log("✅ Admin reset successful.");
-    console.log(`Email: ${email}`);
-    console.log(`Password: ${password}`);
-  } catch (err) {
-    console.error("❌ Error resetting admin:", err.message);
-  }
+  // insert new one
+  await pool.query(
+    'INSERT INTO admins (email, password) VALUES (?, ?)',
+    [email.toLowerCase(), hashedPassword]
+  );
 };
-
-if (require.main === module) {
-  run().then(() => process.exit());
-} else {
-  module.exports = run;
-}

@@ -1,42 +1,25 @@
 const dotenv = require("dotenv");
-const connectDB = require("../config/db");
-const Admin = require("../models/Admin");
+const { resetAdmin } = require("../models/Admin");
 
 dotenv.config();
 
-const resetAdmin = async () => {
+const run = async () => {
   try {
-    await connectDB();
-    console.log("✅ MongoDB connected");
-
     const email = "paykaro@example.com";
-    const password = "newsecurepassword"; // Plain password
+    const password = "newsecurepassword";
 
-    // Delete all existing admins
-    const deleted = await Admin.deleteMany({});
-    console.log(`🗑️ Deleted ${deleted.deletedCount} existing admin(s)`);
+    await resetAdmin(email, password);
 
-    // Create new admin — plain password is fine here, schema will hash it
-    const admin = new Admin({
-      email: email.toLowerCase(),
-      password, // plain text
-    });
-
-    await admin.save();
-    /* console.log(`✅ New admin created with email: ${email}`);
-    console.log(`🔐 Password used (plain): ${password}`); */
+    console.log("✅ Admin reset successful.");
+    console.log(`Email: ${email}`);
+    console.log(`Password: ${password}`);
   } catch (err) {
-    console.error("❌ Error:", err.message);
-  } /* finally {
-    process.exit();
-  } */
+    console.error("❌ Error resetting admin:", err.message);
+  }
 };
 
-
-// 🔁 Only exit if run directly from CLI
 if (require.main === module) {
-  resetAdmin().then(() => process.exit());
+  run().then(() => process.exit());
 } else {
-  module.exports = resetAdmin;
+  module.exports = run;
 }
-/* run(); */

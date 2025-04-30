@@ -1,7 +1,7 @@
 // controllers/storeController.js (MySQL version)
 
-const Store = require('../models/storeModel');
-const CategoryCashback = require('../models/categoryCashbackModel');
+const Store = require('../models/Store');
+const CategoryCashback = require('../models/Category');
 const formatCashback = require('../utils/formatCashback');
 
 // ✅ Create Store with categoryCashbacks
